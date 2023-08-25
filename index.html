@@ -1,24 +1,91 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title>YouTube To Audio</title>
-    <script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js">
-    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   </head>
   <body>
-    <input type="text" id = "youtubelink">
-    <button id = "download">Download</button>
+    <p id="author"></p>
+    <marquee behavior="" direction="" id="title"></marquee>
+    <button id="play">Play</button>
+    <button id="pause">Pause</button>
+    <button id="next">Next</button>
 
-    <audio id="audio" autoplay controls style = "margin-top: 30px; display: none;"></audio>
+    <audio id="audio" controls style="margin-top: 30px"></audio>
 
     <script>
-      $.getScript("https://ytconverter.github.io/converter.js", function(){
-        $("#download").click(function(){
-          $("#audio").css("display", "block");
-          var youtubelink = $('#youtubelink').val();
-          var audio_tag = $('#audio')[0];
-          converter(youtubelink, audio_tag);
+      function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min)) + min;
+      }
+      $(document).ready(() => {
+        let key = "_-vsHpF4sZo";
+        const audioElement = document.getElementById("audio");
+        const playButton = document.getElementById("play");
+        const pauseButton = document.getElementById("pause");
+        const nextButton = document.getElementById("next");
+        var apiUrl = `https://yt-source.nico.dev/${key}/`;
+
+        function next() {
+          $.get(
+            "https://corsproxy.io/?https://django-hello-world-nu-jade.vercel.app/nextvideo/?q=" +
+              key
+          ).then((data) => {
+            const random = getRandomInt(0, data['ids'].length - 1);
+            console.log(random, data.length);
+            console.log(key);
+            key = data['ids'][random];
+            console.log(key);
+            apiUrl = `https://yt-source.nico.dev/${key}/`;
+            console.log(apiUrl);
+            fetch(apiUrl)
+              .then((response) => response.json())
+              .then((data) => {
+                $('#author').text(data['author']);
+                $('#title').text(data['title']);
+                const audioUrl = data.formats["audio/mp4"];
+
+                // Set the audio source to the fetched URL
+                audioElement.src = audioUrl;
+                audioElement.play();
+              })
+              .catch((error) =>
+                console.error("Error fetching audio URL:", error)
+              );
+          });
+        }
+
+        // Fetch the API to get the audio URL
+        fetch(apiUrl)
+          .then((response) => response.json())
+          .then((data) => {
+            $('#author').text(data['author']);
+            $('#title').text(data['title']);
+            const audioUrl = data.formats["audio/mp4"];
+
+            // Set the audio source to the fetched URL
+            audioElement.src = audioUrl;
+          })
+          .catch((error) => console.error("Error fetching audio URL:", error));
+
+        // Function to play the audio
+        playButton.addEventListener("click", () => {
+          audioElement.play();
+        });
+
+        // Function to pause the audio
+        pauseButton.addEventListener("click", () => {
+          audioElement.pause();
+        });
+        
+        nextButton.addEventListener("click", () => {
+          next();
+        });
+
+        audioElement.addEventListener("ended", () => {
+          next();
+          // Do something when the audio has finished playing
+          console.log("Audio has finished playing.");
         });
       });
     </script>
