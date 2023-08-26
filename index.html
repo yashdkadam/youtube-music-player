@@ -24,7 +24,7 @@
         const playButton = document.getElementById("play");
         const pauseButton = document.getElementById("pause");
         const nextButton = document.getElementById("next");
-        var apiUrl = `https://yt-source.nico.dev/${key}/`;
+        var apiUrl = `https://weak-tan-eagle-hose.cyclic.cloud/${key}/`;
 
         function next() {
           $.get(
@@ -36,7 +36,7 @@
             console.log(key);
             key = data['ids'][random];
             console.log(key);
-            apiUrl = `https://yt-source.nico.dev/${key}/`;
+            apiUrl = `https://weak-tan-eagle-hose.cyclic.cloud/${key}/`;
             console.log(apiUrl);
             fetch(apiUrl)
               .then((response) => response.json())
