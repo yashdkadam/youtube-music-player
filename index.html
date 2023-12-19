@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <title>YouTube To Audio</title>
+    <input id="test"/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   </head>
   <body>
@@ -19,7 +20,11 @@
         return Math.floor(Math.random() * (max - min)) + min;
       }
       $(document).ready(() => {
-        let key = "_-vsHpF4sZo";
+        function getYouTubeVideoId(url) {
+            var match = url.match(/[?&]v=([^&]+)/);
+            return match && match[1] ? match[1] : null;
+        }
+        let key = getYouTubeVideoId($('#test').val);
         const audioElement = document.getElementById("audio");
         const playButton = document.getElementById("play");
         const pauseButton = document.getElementById("pause");
@@ -28,7 +33,7 @@
 
         function next() {
           $.get(
-            "https://corsproxy.io/?https://django-hello-world-nu-jade.vercel.app/nextvideo/?q=" +
+            "https://django-hello-world-nu-jade.vercel.app/nextvideo/?q=" +
               key
           ).then((data) => {
             const random = getRandomInt(0, data['ids'].length - 1);
